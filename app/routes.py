@@ -63,7 +63,7 @@ def create_board():
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
 
 # card_routes
-cards_bp = Blueprint('csrds_bp', __name__, url_prefix='/cards')
+cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
 
 # DELETE card
 @cards_bp.route('/<card_id>', methods=['DELETE'])

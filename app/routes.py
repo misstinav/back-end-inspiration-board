@@ -36,7 +36,6 @@ def read_one_board(board_id):
       "owner": board.owner
   }
 
-
 @boards_bp.route('', methods=['POST'])
 def create_board():
   request_body = request.get_json()
@@ -52,16 +51,52 @@ def create_board():
 
 
 
-@boards_bp.route('/<board_id>/cards', methods=['POST'])
 
-def create_card():
+########################## CARD ROUTES ###################################
+
+@boards_bp.route('/<board_id>/cards', methods=['POST'])
+def create_card(board_id):
   request_body = request.get_json()
+  
+  boards = Board.query.all()
   new_card = Card(
-    message=request_body["request"],
+    message=request_body["message"],
     likes_count=request_body["likes_count"]
   )
+  for board in boards:
+    if board.board_id == int(board_id):
+      board.cards.append(new_card)
+  
   db.session.add(new_card)
   db.session.commit()
 
   return make_response(jsonify(f"Card message {new_card.message} successfully created"), 201)
 
+
+@boards_bp.route('/<board_id>/cards/<card_id>', methods=["PUT"])
+def update_liked_card(card_id):
+  card = Card.query.get(int(card_id))
+
+  request_body = request.get_json()
+  card.likes_count = request_body["likes_count"]
+
+  db.session.commit()
+
+  return make_response("Card like count has been updated successfully")
+
+# read all cards from one board
+@boards_bp.route('/<board_id>/cards', methods=['GET'])
+def read_cards(board_id):
+  cards = Card.query.all()
+
+  cards_response = []
+  for card in cards:
+    if card.board_id == board_id:
+      cards_response.append(
+        {
+          "card_id": card.card_id,
+          "message": card.message,
+          "likes_count": card.likes_count
+        }
+      )
+  return jsonify(cards_response)

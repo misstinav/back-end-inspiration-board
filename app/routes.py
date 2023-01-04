@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.board import Board
+from app.models.card import Card
 
 # example_bp = Blueprint('example_bp', __name__)
 
@@ -47,3 +48,18 @@ def create_board():
   db.session.commit()
 
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
+
+# read all cards from one board
+@boards_bp.route('/<board_id>/cards', methods=['GET'])
+def read_cards(board_id):
+
+  cards_response = []
+  for card in board_id.card:
+    cards_response.append(
+      {
+        "card_id": card.card_id,
+        "message": card.message,
+        "likes_count": card.likes_count
+      }
+    )
+  return jsonify(cards_response)

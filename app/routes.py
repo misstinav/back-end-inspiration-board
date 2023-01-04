@@ -52,14 +52,16 @@ def create_board():
 # read all cards from one board
 @boards_bp.route('/<board_id>/cards', methods=['GET'])
 def read_cards(board_id):
+  cards = Card.query.all()
 
   cards_response = []
-  for card in board_id.card:
-    cards_response.append(
-      {
-        "card_id": card.card_id,
-        "message": card.message,
-        "likes_count": card.likes_count
-      }
-    )
+  for card in cards:
+    if card.board_id == board_id:
+      cards_response.append(
+        {
+          "card_id": card.card_id,
+          "message": card.message,
+          "likes_count": card.likes_count
+        }
+      )
   return jsonify(cards_response)

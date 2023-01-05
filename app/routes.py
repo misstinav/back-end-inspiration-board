@@ -75,7 +75,7 @@ def create_board():
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
 
 ########################## CARD ROUTES ###################################
-# cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
+cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
 
 # read all cards from one board
 @boards_bp.route('/<board_id>/cards', methods=['GET'])
@@ -110,12 +110,13 @@ def create_card(board_id):
 
   return make_response(jsonify(f"Card message {new_card.message} successfully created"), 201)
 
-
-@boards_bp.route('/<board_id>/cards/<card_id>', methods=["PUT"])
+# update card likes count
+@cards_bp.route('/<card_id>', methods=["PUT"])
 def update_liked_card(card_id):
-  card = Card.query.get(int(card_id))
+  card = validate_models(Card, card_id)
 
   request_body = request.get_json()
+
   card.likes_count = request_body["likes_count"]
 
   db.session.commit()

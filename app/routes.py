@@ -69,6 +69,16 @@ def create_board():
 
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
 
+# delete board
+@boards_bp.route('/<board_id>', methods=['DELETE'])
+def delete_board(board_id):
+  board = validate_models(Board, board_id)
+
+  db.session.delete(board)
+  db.session.commit()
+
+  return make_response(jsonify(f"Board {board.board_id} successfully deleted"))
+
 ########################## CARD ROUTES ###################################
 cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
 
@@ -107,7 +117,7 @@ def create_card(board_id):
   return make_response(jsonify(f"Card message {new_card.message} successfully created"), 201)
 
 # update card likes count
-@cards_bp.route('/<card_id>', methods=["PUT"])
+@cards_bp.route('/<card_id>', methods=['PUT'])
 def update_liked_card(card_id):
   card = validate_models(Card, card_id)
 

@@ -62,6 +62,12 @@ def create_board():
 
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
 
+
+
+
+
+########################## CARD ROUTES ###################################
+
 # card_routes
 cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
 
@@ -72,11 +78,6 @@ def delete_card(card_id):
 
   db.session.delete(card_id)
   db.session.commit()
-
-
-
-
-########################## CARD ROUTES ###################################
 
 @boards_bp.route('/<board_id>/cards', methods=['POST'])
 def create_card(board_id):

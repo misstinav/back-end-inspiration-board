@@ -3,8 +3,6 @@ from app import db
 from app.models.board import Board
 from app.models.card import Card
 
-# example_bp = Blueprint('example_bp', __name__)
-
 def validate_models(cls, model_id):
   try:
       model_id = int(model_id)
@@ -34,12 +32,9 @@ def read_boards():
     )
   return jsonify(boards_response)
 
-
 #get one board by board id
 @boards_bp.route('/<board_id>', methods=['GET'])
 def read_one_board(board_id):
-  # board_id = int(board_id)
-  # board = Board.query.get(board_id)
   board = validate_models(Board, board_id)
 
   return{
@@ -48,9 +43,9 @@ def read_one_board(board_id):
       "owner": board.owner
   }
 
-# get one board by title instead of id
+# get one board by title instead of id, these two cannot be exist at the same time
 # @boards_bp.route('/<title>', methods=['GET'])
-# def read_one_board(title):
+# def read_one_board_with_title(title):
 #   boards = Board.query.all()
 #   for board in boards:
 #     if board.title == title:
@@ -95,6 +90,7 @@ def read_cards(board_id):
       )
   return jsonify(cards_response)
 
+# create card inside a board
 @boards_bp.route('/<board_id>/cards', methods=['POST'])
 def create_card(board_id):
   board = validate_models(Board, board_id)
@@ -124,12 +120,11 @@ def update_liked_card(card_id):
   return make_response("Card like count has been updated successfully")
 
 # DELETE card
-@boards_bp.route('/<board_id>/cards/<card_id>', methods=['DELETE'])
-def delete_card(board_id, card_id):
-  board = validate_models(Board, board_id)
+@cards_bp.route('/<card_id>', methods=['DELETE'])
+def delete_card(card_id):
   card = validate_models(Card, card_id)
 
   db.session.delete(card)
   db.session.commit()
 
-  return make_response(jsonify({f"Card {card.card_id} successfully deleted"}))
+  return make_response(jsonify(f"Card {card.card_id} successfully deleted"))

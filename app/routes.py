@@ -5,19 +5,20 @@ from app.models.card import Card
 
 def validate_models(cls, model_id):
   try:
-      model_id = int(model_id)
+    model_id = int(model_id)
   except:
-      abort(make_response({"message":f"{cls.__name__} {model_id} invalid"}, 400))
+    abort(make_response({"message":f"{cls.__name__} {model_id} invalid"}, 400))
 
   model = cls.query.get(model_id)
 
   if not model:
-      abort(make_response({"message":f"{cls.__name__} {model_id} not found"}, 404))
+    abort(make_response({"message":f"{cls.__name__} {model_id} not found"}, 404))
   return model
 
 ############################## BOARD ROUTES ##############################
 boards_bp = Blueprint('boards_bp', __name__, url_prefix='/boards')
 
+# get all boards
 @boards_bp.route('', methods=['GET'])
 def read_boards():
   boards = Board.query.all()
@@ -84,6 +85,16 @@ def create_board():
 
   return make_response(jsonify(f"Board {new_board.title} successfully created"), 201)
 
+# delete board
+@boards_bp.route('/<board_id>', methods=['DELETE'])
+def delete_board(board_id):
+  board = validate_models(Board, board_id)
+
+  db.session.delete(board)
+  db.session.commit()
+
+  return make_response(jsonify(f"Board {board.board_id} successfully deleted"))
+
 ########################## CARD ROUTES ###################################
 cards_bp = Blueprint('cards_bp', __name__, url_prefix='/cards')
 
@@ -122,7 +133,7 @@ def create_card(board_id):
   return make_response(jsonify(f"Card message {new_card.message} successfully created"), 201)
 
 # update card likes count
-@cards_bp.route('/<card_id>', methods=["PUT"])
+@cards_bp.route('/<card_id>', methods=['PUT'])
 def update_liked_card(card_id):
   card = validate_models(Card, card_id)
 

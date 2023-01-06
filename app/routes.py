@@ -15,6 +15,7 @@ def validate_models(cls, model_id):
       abort(make_response({"message":f"{cls.__name__} {model_id} not found"}, 404))
   return model
 
+############################## BOARD ROUTES ##############################
 boards_bp = Blueprint('boards_bp', __name__, url_prefix='/boards')
 
 @boards_bp.route('', methods=['GET'])
@@ -42,6 +43,20 @@ def read_one_board(board_id):
       "title": board.title,
       "owner": board.owner
   }
+
+@boards_bp.route('/<board_id>', methods=["PUT"])
+def update_board(board_id):
+  board = validate_models(Board, board_id)
+
+  request_body = request.get_json()
+
+  board.title = request_body["title"]
+  board.owner = request_body["owner"]
+
+  db.session.commit()
+
+  return make_response(jsonify("Board has been updated"))
+
 
 # get one board by title instead of id, these two cannot be exist at the same time
 # @boards_bp.route('/<title>', methods=['GET'])

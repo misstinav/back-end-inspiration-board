@@ -132,14 +132,12 @@ def create_card(board_id):
 
   return make_response(jsonify(f"Card message {new_card.message} successfully created"), 201)
 
+
 # update card likes count
 @cards_bp.route('/<card_id>', methods=['PUT'])
 def update_liked_card(card_id):
   card = validate_models(Card, card_id)
-
-  request_body = request.get_json()
-
-  card.likes_count = request_body["likes_count"]
+  card.likes_count = card.likes_count + 1
 
   db.session.commit()
 

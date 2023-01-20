@@ -15,6 +15,12 @@ def validate_models(cls, model_id):
     abort(make_response({"message":f"{cls.__name__} {model_id} not found"}, 404))
   return model
 
+homepage_bp = Blueprint('homepage_bp', __name__)
+
+@homepage_bp.route('/', methods=['GET'])
+def read_homepage():
+  return 'Welcome to our homepage!'
+
 ############################## BOARD ROUTES ##############################
 boards_bp = Blueprint('boards_bp', __name__, url_prefix='/boards')
 

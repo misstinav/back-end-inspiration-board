@@ -36,5 +36,8 @@ def create_app(test_config=None):
     from .routes import cards_bp
     app.register_blueprint(cards_bp)
 
+    from .routes import homepage_bp
+    app.register_blueprint(homepage_bp)
+
     CORS(app)
     return app
